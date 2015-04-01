@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="bootstrap.min.css" rel="stylesheet">
-	<link href="bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
     <script src="js/d3.min.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -42,7 +42,7 @@
             border: 1px solid black;
         }
 		.chart rect {
-		  fill: steelblue;
+		  fill: green;
 		}
 
 		.chart text {
@@ -51,12 +51,16 @@
 		  text-anchor: middle;
 		}
 		.bar {
-		  fill: steelblue;
+		  fill: green;
 		}
 
 		.axis text {
 		  font: 10px sans-serif;
+      color: blue;
 		}
+    .axis xlab {
+      font: 10px sans-serif;
+    }    
 
 		.axis path,
 		.axis line {
@@ -73,6 +77,9 @@
 		  top: 200px;
 		  right: 100px;
 		}
+    .ctitle test {
+      font: 20px sans-serif;
+    }
     </style>
 </head>
 <body>
@@ -112,7 +119,7 @@ for (var i = 0, len = query.length; i < len; i++) {
 var data = d3.entries(letterCounts);
 data.sort(function(a, b) { return d3.ascending(a.key, b.key); });
 
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
+var margin = {top: 80, right: 30, bottom: 80, left: 80},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -132,12 +139,17 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 
+
+var labels = ["Letter Counts","Letters","Count of Letters in Query in Alphabetical Order",
+              "Count of Letters in Query in Value Order"]
+
+
 var barWidth = width / data.length;
 
 var chart = d3.select(".chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 y.domain([0, d3.max(data, function(d) { return d.value; })]);
@@ -147,17 +159,35 @@ x.domain(data.map(function(d) { return d.key; }));
 chart.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(xAxis);
+  .call(xAxis)
+  .append("text")
+    .attr("y", 50)
+    .attr("x", width/2)
+    .attr("dx", ".71em")
+    .style("text-anchor", "end")
+    .text(labels[1]);
 
 chart.append("g")
   .attr("class", "y axis")
   .call(yAxis)
 .append("text")
   .attr("transform", "rotate(-90)")
-  .attr("y", 6)
+  .attr("y", -50)
+  .attr("x", -height/2)
   .attr("dy", ".71em")
   .style("text-anchor", "end")
-  .text("Frequency");
+  .style("color", "red")
+  .text(labels[0]);
+
+chart.append("g")
+  .attr("class", "chart title")
+.append("text")
+  .attr("y", -35)
+  .attr("x", width/2)
+  .attr("dx", ".71em")
+  .style("text-anchor", "end")
+  .style("color", "blue")
+  .text(labels[2]);
 
 chart.selectAll(".bar")
   .data(data)
@@ -174,15 +204,19 @@ d3.select("input").on("change", change);
 
 function change() {
 
+var ylab0 = this.checked
+    ? labels[3]
+    : labels[2];
+
+chart.selectAll(".chart.title").selectAll("text")
+      .text(function (d) {return ylab0;});
+
 // Copy-on-write since tweens are evaluated after a delay.
 var x0 = x.domain(data.sort(this.checked
     ? function(a, b) { return b.value - a.value; }
     : function(a, b) { return d3.ascending(a.key, b.key); })
     .map(function(d) { return d.key; }))
     .copy();
-
-chart.selectAll("rect")
-    .sort(function(a, b) { return x0(a.key) - x0(b.key); });
 
 var transition = chart.transition().duration(750),
     delay = function(d, i) { return i * 50; };
@@ -195,6 +229,7 @@ transition.select(".x.axis")
     .call(xAxis)
   .selectAll("g")
     .delay(delay);
+
 }
 
 
