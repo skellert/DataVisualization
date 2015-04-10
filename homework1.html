@@ -89,15 +89,30 @@
 		</div>
 	</div>
 
-<p>This is my data visualization for homework 1. Below are the key changes that I made to the bar chart template for the B and A level functionality.</p>
-<ol> Axis Names</ol>
-<ol> Chart Title</ol>
-<ol> Bar Color</ol>
-<ol> Check Box to change bar chart order<ol>This also changes the chart title</ol></ol>
-
 <div align = "center">
 <svg class="chart"></svg>
 </div>
+<ol>
+<p>This is my data visualization for homework 1. Below are the key changes that I made to the bar chart template for the B and A level functionality.</p>
+<ol>C-level Functionality
+  <ol> Axis Names</ol>
+  <ol> Chart Title</ol>
+  <ol> Bar Color to Green</ol>
+  <ol> Axis Line Color to Orange</ol>
+  <ol> Grid Lines</ol>
+  <ol> All bars are defaulted to alphabetical sorting</ol></ol>
+<ol>B-level Functionality
+  <ol>Check box changes the sort order to numeric order and also changes the chart title to reflect the order change</ol>
+  <ol>Hovering over a bar changes the color and produces a caption that gives the letter count and the letter</ol></ol>
+<ol>A-level Functionality
+  <ol>Each bar appears separately and grows smoothly from the bottom of the chart</ol>
+  <ol>The caption that appears on hover over fades in smoothly</ol></ol></ol>
+
+<ol> 
+<p>The first changes I made to the graph were to provides some basic context. The chart title and the axis names give clear information on the purpose of the chart and what each dimension of it displays. The grid lines make it much easier to see what value each bar is associated with. Additionally, the grid lines make it more clear that the values are discrete. The alphabetical sort makes the bars easier to find and complements the sort feature added later.</p>
+<p>The next wave of changes add a layer of interactivity to the visualization. The first feature is a sort check box that changes the chart from being sorted in alphabtical order to numeric order. When the box is unchecked it reverts back to alphabetical order. This makes it very easy for users to either find a specific letter or find specific values. The other element of interactivity I added was a mouseover feature that highlight the specific bar in blue and provides a caption that gives information on that bar. This information is the letter count and letter associated with that bar.</p>
+<p>The final changes I made were to give some visual sophistication to the graph. This includes the smooth growth of bars from the x axis up to their value and the smooth fade in of the hover over caption. The first of these does not really serve a purpose but the second allows for more visual simplicity. The caption will only appear if the mouse is held on a bar so that when scanning over the bars, captions are not popping in and out.</p><ol>
+
 <label><input type="checkbox"> Sort values</label>
 
 
@@ -222,12 +237,12 @@ chart.selectAll(".bar")
   .style("fill",colors.green)
   .transition()
     .duration(1000)
-    .delay(function(d,i){return 1000*i;})
+    .delay(function(d,i){return 100*i;})
     .style("fill-opacity",1)
     .each("end", function(){
       d3.select(this).transition()
-      .duration(1000)
-      .delay(function(d,i){return 1000*i;})
+      .duration(500)
+      .delay(function(d,i){return 100*i;})
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
     });
