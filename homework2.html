@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <style>
+        .axis text {
+            font-size: 8pt;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .chart {
+		  float: left;
+		  padding-right: 5px;
+		  padding-bottom: 5px;
+		  padding-top:0;
+		  padding-left:0;
+		}
+				.bar {
+		}
+
+	</style>
+    <title>Homework 2 Multivariate</title>
+</head>
+<body align = "center">
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Multivariate Visualization</h1>
+		</div>
+	</div>
+
+<div align = "center", id = "area1">
+</div>
+<div align = "center", id = "area2">
+</div>
+<div align = "center", id = "area3">
+</div>
+
+<script>
+
+var colors = {
+    "grey":   "#bbbbbb",
+    "blue":   "#377eb8",
+    "purple": "#984ea3",
+    "green":  "#4daf4a",
+    "orange": "#ff7f00"
+};
+
+
+var width = 500;
+var height = 500;
+
+var data = []
+
+
+
+
+d3.csv("state.csv", function (d){
+	data = d;
+
+
+
+	var margin = 4*d3.max(data, function (d){return +d["Murder"];});
+
+	var x = d3.scale.linear()
+    	.range([0, width - 2 * margin]);
+
+	var y = d3.scale.linear()
+    	.range([height - 2 * margin, 0]);
+
+    x.domain([d3.min(data, function(d) {return +d["Income"]*.95;}),d3.max(data, function(d) {return +d["Income"]*1.05;})]);
+	y.domain([d3.min(data, function(d) {return +d["Life.Exp"]*.99;}),d3.max(data, function(d) {return +d["Life.Exp"]*1.01;})]);
+
+	var svg = d3.select("#area1").append("svg")
+			.attr("class", "bubble")
+			.attr("height", height)
+			.attr("width", width)
+			.style("border-color", colors.grey)
+			.style("border-width", 1)
+			.style("border-style", "solid");
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+	    .tickSize(5);
+
+	plot = svg.append("g")
+			.attr("transform", "translate(" + margin + "," + margin + ")");
+
+
+	plot.append("g")
+	  .attr("class", "x axis")
+	  .attr("transform", "translate(0," + (height - 2*margin) + ")")
+	  .call(xAxis);
+
+	plot.append("g")
+	  .attr("class", "y axis")
+	  .call(yAxis);
+
+	plot.append("text")
+		.attr("class", "title")
+		.attr("x", width/2 - margin)
+		.attr("y", -15)
+		.style("text-anchor", "middle")
+		.text("Bubble Chart of Life Expectancy vs Income with Murder as Bubble Size")
+
+	svg.append("text")
+		.attr("class", "xlab")
+		.attr("x", width/2)
+		.attr("y", height - margin/2)
+		.style("text-anchor", "middle")
+		.text("Income")
+
+	svg.append("text")
+		.attr("class", "ylab")
+		.attr("x", -height/2 - margin/2)
+		.attr("y", margin/2)
+		.attr("transform", "rotate(-90)")
+		.style("text-anchor", "middle")
+		.text("Life Expectancy")
+
+	plot.selectAll("circle").data(data).enter()
+		.append("circle")
+		.attr("cx", function (d){return x(+d["Income"]);})
+		.attr("cy", function (d){return y(+d["Life.Exp"]);})
+		.attr("r", function(d) {return 3*Math.sqrt(d["Murder"]);})
+		.attr("state",function (d){return d["state.name"]})
+		.style("fill-opacity", .8)
+		.style("fill", colors.blue)
+		.style("stroke","#000")
+		.on("mouseover", function(){
+			plot.append("text")
+				.attr("class","caption")
+				.attr("x", d3.select(this).attr("cx"))
+				.attr("y", d3.select(this).attr("cy") - margin/4)
+				.text(d3.select(this).attr("state"))
+			;
+			})
+		.on("mouseout", function(){
+			d3.selectAll(".caption")
+			.remove();
+		});
+
+	var legend = svg.append("g")
+	    			.append("rect")
+	    			.attr("x", 400)
+	    			.attr("y", 130)
+	    			.attr("width", 80)
+	    			.attr("height", 100)
+	    			.style("stroke", "#000")
+	    			.style("fill", "white")
+	svg.append("text")
+		.attr("x", 410)
+		.attr("y", 145)
+		.text("Murders")
+
+	svg.append("circle")
+			.attr("cx", 420)
+			.attr("cy", 170)
+			.attr("r", 3*Math.sqrt(margin/4))
+			.style("fill", colors.blue)
+			.style("stroke", "#000")
+	svg.append("text")
+			.attr("x",440)
+			.attr("y", 170)
+			.text(margin/4)
+
+	svg.append("circle")
+			.attr("cx", 420)
+			.attr("cy", 220)
+			.attr("r", 3*Math.sqrt(d3.min(data, function (d){return +d["Murder"];})))
+			.style("fill", colors.blue)
+			.style("stroke", "#000")
+	svg.append("text")
+			.attr("x",440)
+			.attr("y", 220)
+			.text(d3.min(data, function (d){return +d["Murder"];}))
+
+
+	var regions = d3.nest()
+      .key(function(d) { return d["state.division"]; })
+      .entries(data);
+
+
+
+    var plotAx = function(r){
+
+	    var height2 = 300
+	    var width2 = 300
+	    var margin2 = {"top":15, "bottom": 30, "left":50,"right":15}
+
+		var y2 = d3.scale.linear()
+    			.range([height2-margin2.top - margin2.bottom,0])
+    			.domain([0,d3.max(data, function (d) {return +d.Frost;})]);
+
+		var x2 =  d3.scale.ordinal()
+	    							.rangeRoundBands([0, width2], .1)
+	    							.domain(r.values.map(function (d) {return d["state.abb"];}));
+
+		var xAxis2 = d3.svg.axis()
+					    .scale(x2)
+					    .orient("bottom");
+
+		var yAxis2 = d3.svg.axis()
+		    .scale(y2)
+		    .orient("left")
+		    .tickSize(5);
+
+    	var svg2 =d3.select("#area2")
+			  .append("svg")
+			  .attr("class","multi")
+		      .attr("width", 300 + margin2.left + margin2.right)
+		      .attr("height", 300 + margin2.top + margin2.bottom)
+		      .style("border-color", colors.grey)
+			  .style("border-width", 1)
+			  .style("border-style", "solid");
+
+		svg2.append("g")
+			  .attr("class", "y axis")
+			  .attr("transform", "translate(" + margin2.left+"," + margin2.bottom + ")")
+			  .call(yAxis2);
+
+		svg2.append("g")
+			  .attr("class", "x axis")
+			  .attr("transform", "translate(" + margin2.left+"," + (height2 - margin2.top) + ")")	
+			  .call(xAxis2);
+
+	  	svg2.append("text")
+		  	.attr("class", "title")
+		  	.attr("x", (width2 + margin2.left + margin2.right) /2.0)
+		  	.attr("y", 12)
+		  	.style("text-anchor", "middle")
+		  	.text(r.key);
+
+		svg2.append("text")
+		  	.attr("class", "xlab")
+		  	.attr("x", (width2 + margin2.left + margin2.right) /2.0)
+		  	.attr("y", height2 + margin2.bottom)
+		  	.style("text-anchor", "middle")
+		  	.text("State");
+
+		svg2.append("text")
+		  	.attr("class", "ylab")
+		  	.attr("x", -height2/2)
+		  	.attr("y", margin2.left/2 - 5)
+		  	.attr("transform","rotate(-90)")
+		  	.style("text-anchor", "middle")
+		  	.text("Frost");
+
+		svg2.selectAll(".bar").data(r.values).enter()
+			.append("rect")
+			.attr("x", function(d){
+				return x2(d["state.abb"]) + margin2.left + x2.rangeBand()/2 - 15;})
+			.attr("width", 30)
+			.attr("y", function(d){return y2(d.Frost) + margin2.bottom;})
+			.attr("height", function(d){return height2 - y2(d.Frost) - margin2.top - margin2.bottom;})
+			.style("fill", "#8FBC8F");
+    };
+
+
+    regions.forEach(function(r){
+    	plotAx(r);
+    });
+
+
+	var svg3 = d3.select("#area3").append("svg")
+					.attr("height", 500)
+					.attr("width", 1000)
+				      .style("border-color", colors.grey)
+					  .style("border-width", 1)
+					  .style("border-style", "solid");
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
