@@ -67,7 +67,7 @@
 	</style>
     <title>Homework 2 Multivariate</title>
 </head>
-<body align = "center">
+<body align = "left">
 	<div class="jumbotron">
 		<div class="container">
 			<h1>Multivariate Visualization</h1>
@@ -81,6 +81,28 @@
 <div align = "center", id = "area3">
 </div>
 
+<div id = "Description">
+	<ol><ol>Bubble Chart
+			<ol>Income on x axis</ol>
+			<ol>Life Expectancy on y axis</ol>
+			<ol>Murder as bubble size</ol>
+			<ol>Legend for bubble size interpretation</ol>
+			<ol>State name on hover over</ol></ol>
+		<ol>Small Multiples
+			<ol>State Division is the multiple categoty</ol>
+			<ol>Frost by state in each multiple</ol>
+			<ol>Bar width constant across multiples</ol>
+		</ol>
+		<ol>Parallel Coordinates
+			<ol>All numeric variables represented</ol>
+			<ol>Lines are colored by region</ol>
+			<ol>Brush for highlight lines in certain areas</ol>
+	</ol>
+	<ol>
+	<p>The bubble chart is designed to show three numeric variables simultaneously. Income and Life Expectancy are shown using a standard scatterplot. The third element, Murder, is shown through the area of each bubble in the scatter plot. Additionally, a legend is added to improve interpretability of the bubble size and state name is shown when hovering over a bubble to identify it.</p>
+	<p>The small multiples is designed to give bar charts of the frost in each state but broken out by state division. These breakout make it easy to see which regions have the most frost as well as which states are significant different from their neighbors. Additionally, I ensured that all bar widths were equal despite different numbers of bars to reduce lie factor.</p>
+	<p>The parallel coordinates allows for the visualization of the relationships between all the numeric variables in the dataset. The brush feature allows for additional interpretability by highlight groups.</p></ol> 
+</div>
 <script>
 
 var colors = {
