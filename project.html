@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/colorbrewer.js"></script>
+    <style>
+        .axis text {
+            font-size: 8pt;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .chart {
+		  float: left;
+		  padding-right: 5px;
+		  padding-bottom: 5px;
+		  padding-top:0;
+		  padding-left:0;
+		}
+				.bar {
+		}
+		svg {
+  font: 10px sans-serif;
+}
+
+.background path {
+  fill: none;
+  stroke: #ccc;
+  stroke-opacity: .4;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke-opacity: .7;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-shadow: 0 1px 0 #fff;
+  cursor: move;
+}
+	</style>
+    <title>Project Dataset</title>
+</head>
+<body align = "left">
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Project Dataset</h1>
+		</div>
+	</div>
+
+    <ul>
+      <li><a href="http://catalog.data.gov/dataset/community-health-status-indicators-chsi-to-combat-obesity-heart-disease-and-cancer">Source of Dataset</a></li>
+      <li>This is a dataset from Data.gov and is therefore open for use.</li>
+      <li>The data set has a mix of numerical and categorical information. The numerical information is primarily death counts broken out by a wide number of categories. These categories include county, state, age band, race, and type of death.</li>
+      <li>I spent a long time looking through the datasets on Data.gov for one that had a good mix of interesting categorical and numeric information. This dataset has a wealth of both and also has a lot of potential for interesting discoveries. I hope to be able to find geographic patterns in the data as well as trends between the numerous other categories such as race, age band, and type of death.</li>
+      <li><a href= "https://github.com/skellert/DataVisualization/blob/gh-pages/LEADINGCAUSESOFDEATH.csv">Dataset</a></li>
+    </ul>
+
+<script>
+
+  var data = [];
+
+  d3.csv("Food_Inspections.csv", function(d){
+    data = d;
+    console.log(data.length);
+  });
+</script>
+</body>
+</html>  
