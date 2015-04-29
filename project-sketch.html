@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/colorbrewer.js"></script>
+    <style>
+        .axis text {
+            font-size: 8pt;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .chart {
+		  float: left;
+		  padding-right: 5px;
+		  padding-bottom: 5px;
+		  padding-top:0;
+		  padding-left:0;
+		}
+				.bar {
+		}
+		svg {
+  font: 10px sans-serif;
+}
+
+.background path {
+  fill: none;
+  stroke: #ccc;
+  stroke-opacity: .4;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke-opacity: .7;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-shadow: 0 1px 0 #fff;
+  cursor: move;
+}
+	</style>
+    <title>Project Sketch</title>
+</head>
+<body align = "left">
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Project Sketch</h1>
+		</div>
+	</div>
+
+    <ul>
+      <li>Planned Tools
+          <ul><li>For the project I plan on using a combination of python and R for data preprocessing and then implementing the visualizations in D3. My dataset is by county so I will definitely be taking advantage of D3's county geographic tools.</ul></li></li>
+      <li>Planned Techniques
+          <ul><li>The primary visualization that I would like to implement for this project is a by county map. I would like this visualization to be very similar to the one we saw in class that encoded the biggest crop in each county by color and the share of that crop by opacity. In my data set each county will have a color based on the most common type of death and the opacity will represent the proportion of deaths that are of that type.</ul></li>
+          <ul><li>I would also like to incoporate a visualization for seeing the relationships between types of death. This could be in the form of a scatterplot matrix or and interactive scatterplot with two dropdown menus that give the user the ability to pick two death types to compare. These scatter plots will compare a death count of two types for all counties and include color coding by region or state.</ul></li>
+          <ul><li>Finally, my dataset has death counts by age band as well as county. This could make for an interesting version of a time series plot that shows how how different types of death change with increasing age. I could potentially show these simple time series as multi series line charts in small multiples that are broken out by region or state.</ul></li></li>
+      <li>Planned Interaction
+          <ul><li>I have already discussed some of these interactivities above. Tooltips will be an important component of all visualizations. Specifically this will be helpful for getting detailed information out of each county in the map visualization. Additionally, in the map plot it will be important to be able to zoom in on portions of the map. Some counties are extremely small and will need to be able to be expanded. Ideally, I would like to have a single scatter plot in which the user gets to select via dropdown menus which two death types they would like to compare for correlation.</ul></li></li>
+      <li>Planned Interface
+          <ul><li>I would like the interface for my project to be similar to a new york times data visualization. The focus of the pages is on a series of vizualizations with text giving information and interpretation regarding each graph wrapped around. This was a user can easily progress from one graph to the next but because there is no direct connectivity between graphs they do not need to be clumped together as in a dashboard.</ul></li></li>
+      <ul><img src="county-map.png"></ul>
+      <ul><img src="scatterplots.png"></ul>
+      <ul><img src="timeseries.png"></ul>
+
+    </ul>
+
+<script>
+
+  var data = [];
+
+  d3.csv("Food_Inspections.csv", function(d){
+    data = d;
+    console.log(data.length);
+  });
+</script>
+</body>
+</html>  
