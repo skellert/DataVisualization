@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/colorbrewer.js"></script>
+    <style>
+      rect.bordered {
+        stroke: #E6E6E6;
+        stroke-width:2px;   
+      }
+
+      text.mono {
+        font-size: 9pt;
+        font-family: Consolas, courier;
+        fill: #aaa;
+      }
+
+      text.axis-workweek {
+        fill: #000;
+      }
+
+      text.axis-worktime {
+        fill: #000;
+      }
+      body {
+        font: 10px sans-serif;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+      .axis text {
+        font: 10px sans-serif;
+      }
+
+      .x.axis path {
+        display: none;
+        width: 25px;
+      }
+
+      .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+      .dot {
+  stroke: #000;
+}
+	</style>
+    <title>Movies Dashboard</title>
+</head>
+<body align = "left">
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Movies Dashboard</h1>
+		</div>
+	</div>
+
+<script type='text/javascript' src='https://public.tableau.com/javascripts/api/viz_v1.js'></script><div class='tableauPlaceholder' style='width: 982px; height: 742px;'><noscript><a href='#'><img alt='Dashboard 1 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Mo&#47;Movies_Dashboard_0&#47;Dashboard1&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz' width='982' height='742' style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='site_root' value='' /><param name='name' value='Movies_Dashboard_0&#47;Dashboard1' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Mo&#47;Movies_Dashboard_0&#47;Dashboard1&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='showVizHome' value='no' /><param name='showTabs' value='y' /><param name='bootstrapWhenNotified' value='true' /></object></div>
+
+<div align = "center", id = "dashboard"></div>
+<div align = "center", id = "dashboard2"></div>
+<div align = "center", id = "dashboard3"></div>
+
+<script>
+
+var main1 = function(){
+  var margin = { top: 50, right: 0, bottom: 0, left: 50 },
+          width = 960 - margin.left - margin.right,
+          height = 250 - margin.top - margin.bottom,
+          gridSize = Math.floor(width / 7),
+          legendElementWidth = gridSize,
+          buckets = 7,
+          colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8"]
+          mpaa = ["PG","PG-13","R","NC-17"],
+          genre = ["Action","Animation","Comedy","Documentary","Drama","Romance","Short"];
+  d3.csv("movies_budg_heat.csv",function(d){
+    return{
+            genre: +d.genre_id,
+            mpaa: +d.mpaa_id,
+            value: +d.budget
+    };
+  },function(data){
+    var colorScale = d3.scale.quantile()
+                      .domain([0, buckets - 1, d3.max(data, function (d) { return d.value; })])
+                      .range(colors);
+
+          var svg = d3.select("#dashboard").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var mpaaLabels = svg.selectAll(".mpaaLabel")
+              .data(mpaa)
+              .enter().append("text")
+                .text(function (d) { return d; })
+                .attr("x", 0)
+                .attr("y", function (d, i) { return i * gridSize/4; })
+                .style("text-anchor", "end")
+                .attr("transform", "translate(-6," + gridSize/8 + ")")
+                .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+
+          var genreLabels = svg.selectAll(".genreLabel")
+              .data(genre)
+              .enter().append("text")
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return i * gridSize; })
+                .attr("y", 0)
+                .style("text-anchor", "middle")
+                .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+                .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+
+          var heatMap = svg.selectAll(".mpaa")
+              .data(data)
+              .enter().append("rect")
+              .attr("x", function(d,i) { return (d.genre - 1) * gridSize; })
+              .attr("y", function(d,i) { return (d.mpaa - 1) * gridSize/4; })
+              .attr("rx", 4)
+              .attr("ry", 4)
+              .attr("class", "hour bordered")
+              .attr("width", gridSize)
+              .attr("height", gridSize/4)
+              .style("fill", colors[0]);
+
+          heatMap.transition().duration(1000)
+              .style("fill", function(d) { return colorScale(d.value); });
+
+          heatMap.append("title").text(function(d) { return d.value; });
+              
+          var legend = svg.selectAll(".legend")
+              .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+              .enter().append("g")
+              .attr("class", "legend");
+
+          legend.append("rect")
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height - 65)
+            .attr("width", legendElementWidth)
+            .attr("height", gridSize / 4)
+            .style("fill", function(d, i) { return colors[i]; });
+
+          legend.append("text")
+            .attr("class", "mono")
+            .text(function(d) { return "≥ " + Math.round(d); })
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height - 65 + gridSize/3);
+  })
+};
+
+var main2 = function(){
+  var margin = { top: 50, right: 0, bottom: 0, left: 50 },
+          width = 960 - margin.left - margin.right,
+          height = 250 - margin.top - margin.bottom,
+          gridSize = Math.floor(width / 7),
+          legendElementWidth = gridSize,
+          buckets = 7,
+          colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8"]
+          mpaa = ["PG","PG-13","R","NC-17"],
+          genre = ["Action","Animation","Comedy","Documentary","Drama","Romance","Short"];
+  d3.csv("movies_rat_heat.csv",function(d){
+    return{
+            genre: +d.genre_id,
+            mpaa: +d.mpaa_id,
+            value: +d.rating
+    };
+  },function(data){
+    var colorScale = d3.scale.quantile()
+                      .domain([0, buckets - 1, d3.max(data, function (d) { return d.value; })])
+                      .range(colors);
+
+          var svg = d3.select("#dashboard").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var mpaaLabels = svg.selectAll(".mpaaLabel")
+              .data(mpaa)
+              .enter().append("text")
+                .text(function (d) { return d; })
+                .attr("x", 0)
+                .attr("y", function (d, i) { return i * gridSize/4; })
+                .style("text-anchor", "end")
+                .attr("transform", "translate(-6," + gridSize/8 + ")")
+                .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+
+          var genreLabels = svg.selectAll(".genreLabel")
+              .data(genre)
+              .enter().append("text")
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return i * gridSize; })
+                .attr("y", 0)
+                .style("text-anchor", "middle")
+                .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+                .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+
+          var heatMap = svg.selectAll(".mpaa")
+              .data(data)
+              .enter().append("rect")
+              .attr("x", function(d,i) { return (d.genre - 1) * gridSize; })
+              .attr("y", function(d,i) { return (d.mpaa - 1) * gridSize/4; })
+              .attr("rx", 4)
+              .attr("ry", 4)
+              .attr("class", "hour bordered")
+              .attr("width", gridSize)
+              .attr("height", gridSize/4)
+              .style("fill", colors[0]);
+
+          heatMap.transition().duration(1000)
+              .style("fill", function(d) { return colorScale(d.value); });
+
+          heatMap.append("title").text(function(d) { return d.value; });
+              
+          var legend = svg.selectAll(".legend")
+              .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+              .enter().append("g")
+              .attr("class", "legend");
+
+          legend.append("rect")
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height - 65)
+            .attr("width", legendElementWidth)
+            .attr("height", gridSize / 4)
+            .style("fill", function(d, i) { return colors[i]; });
+
+          legend.append("text")
+            .attr("class", "mono")
+            .text(function(d) { return "≥ " + Math.round(d); })
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height - 65 + gridSize/3);
+  })
+};
+
+var main3 = function(){
+  var margin = {top: 20, right: 20, bottom: 30, left: 60},
+    width = 450 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+    var parseDate = d3.time.format("%Y").parse;
+
+  var x = d3.time.scale()
+      .range([0, width]);
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+  var line = d3.svg.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.close); });
+
+  var svg = d3.select("#dashboard3").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  d3.csv("movies_tim_agg.csv", function(error, data) {
+    data.forEach(function(d) {
+      d.date = parseDate(d.year);
+      d.close = +d.budget;
+    });
+
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+    y.domain(d3.extent(data, function(d) { return d.close; }));
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Average Budget");
+
+    svg.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("d", line);
+});
+};
+
+var main4 = function(){
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 450 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
+
+  var x = d3.scale.linear()
+      .range([0, width]);
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var color = d3.scale.category10();
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+  var svg = d3.select("#dashboard3").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  d3.csv("movies_scatter.csv", function(error, data) {
+    data.forEach(function(d) {
+      d.sepalLength = +d.rating;
+      d.sepalWidth = +d.votes;
+    });
+
+    x.domain(d3.extent(data, function(d) { return d.sepalWidth; })).nice();
+    y.domain(d3.extent(data, function(d) { return d.sepalLength; })).nice();
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Number of Votes");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Rating")
+
+    svg.selectAll(".dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(d.sepalWidth); })
+        .attr("cy", function(d) { return y(d.sepalLength); })
+        .style("fill", function(d) { return color(d.species); });
+
+});
+};
+
+main1();
+main2();
+main3();
+main4();
+</script>
+</body>
+</html>  
