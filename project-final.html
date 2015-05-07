@@ -82,7 +82,7 @@ var quantize = d3.scale.quantize()
 
 var colorscale = d3.scale.ordinal()
         .domain(["Injury","Cancer","Murder","Suicide","HIV","Heart Disease"])
-        .range(colorbrewer.Set1[6]);
+        .range(colorbrewer.Set2[6]);
 
 var projection = d3.geo.albersUsa()
     .scale(1280)
@@ -138,8 +138,9 @@ function ready(error, us) {
       .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
       .attr("d", path)
+      .attr("type",function(d){return typeById.get(d.id);})
       .style("fill", function(d){return colorscale(typeById.get(d.id));})
-      .style("opacity", function(d){return rateById.get(d.id)/3})
+      .style("opacity", function(d){return rateById.get(d.id)/3;})
       .on("click", clicked)
       .on("mouseover", function(d){
         var bodyNode = d3.select('body').node();
@@ -175,22 +176,37 @@ function ready(error, us) {
         d3.selectAll(".caption").remove();
       });
 
-}
+    colorscale.range().forEach(function (c,i){
+        svg.append("rect")
+                .attr("x", 480 + i*50)
+                .attr("y", height)
+                .attr("width", 50)
+                .attr("height", 15)
+                .style("fill", c)
+                .on("mouseover",function(){
+                    d3.selectAll(".counties").selectAll("path")
+                        .style("opacity",function(d){
+                            if(typeById.get(d.id)===colorscale.domain()[i]){
+                                return rateById.get(d.id)/3;
+                            }
+                            else{return .01}
+                        });
+                })
+                .on("mouseout",function(){
+                    d3.selectAll(".counties").selectAll("path")
+                    .style("opacity", function(d){ return rateById.get(d.id)/3;});
+                });
+        svg.append("text")
+                .attr("x", 480 + i*50)
+                .attr("y", height - 10)
+                .text(colorscale.domain()[i]);
+    });
+
+};
 
 d3.select(self.frameElement).style("height", height + "px");
 
-colorscale.range().forEach(function (c,i){
-    svg.append("rect")
-            .attr("x", 480 + i*50)
-            .attr("y", height)
-            .attr("width", 50)
-            .attr("height", 15)
-            .style("fill", c);
-    svg.append("text")
-            .attr("x", 480 + i*50)
-            .attr("y", height - 10)
-            .text(colorscale.domain()[i]);
-});
+
 
 function clicked(d) {
   var x, y, k;
