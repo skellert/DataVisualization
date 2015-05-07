@@ -167,33 +167,40 @@ var main1 = function(){
           .on("click", clicked)
           .on("mouseover", function(d){
             var absoluteMousePos = d3.mouse(this);
+            var tipbox = {h:70,w:150,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25};
+            if(centered){
+              tipbox = {h:70/4.0,w:150/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0}
+            };
             g.append("g")
                 .attr("class","caption")
                 .append("rect")
-                .attr("x",absoluteMousePos[0] + 10)
-                .attr("y",absoluteMousePos[1] - 35)
-                .attr("height",70)
-                .attr("width",150)
+                .attr("x",absoluteMousePos[0] + tipbox.bx)
+                .attr("y",absoluteMousePos[1] + tipbox.by)
+                .attr("height",tipbox.h)
+                .attr("width",tipbox.w)
                 .style("fill", "steelblue")
                 .style("opacity", .9);
             g.append("g")
                 .attr("class","caption")
                 .append("text")
-                .attr("x",absoluteMousePos[0] + 15)
-                .attr("y",absoluteMousePos[1] - 15)
-                .text("County: "+ countyById.get(d.id));
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty1)
+                .text("County: "+ countyById.get(d.id))
+                .style("font-size",tipbox.t);
             g.append("g")
                 .attr("class","caption")
                 .append("text")
-                .attr("x",absoluteMousePos[0] + 15)
-                .attr("y",absoluteMousePos[1] + 5)
-                .text("Population: "+ popById.get(d.id));
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty2)
+                .text("Population: "+ popById.get(d.id))
+                .style("font-size",tipbox.t);
             g.append("g")
                 .attr("class","caption")
                 .append("text")
-                .attr("x",absoluteMousePos[0] + 15)
-                .attr("y",absoluteMousePos[1] + 25)
-                .text("Type: "+ typeById.get(d.id));})
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty3)
+                .text("Type: "+ typeById.get(d.id))
+                .style("font-size",tipbox.t);})
           .on("mouseout",function(){
             d3.selectAll(".caption").remove();
           });
