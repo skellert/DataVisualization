@@ -51,6 +51,7 @@ function symbolMap() {
     // gets the value property from the dataset
     // for our example, we need to reset this!
     var value = function(d) { return d.value; };
+    var depth = function(d) { return d.depth; };
 
     function chart(id) {
         if (map === null || values === null) {
@@ -85,6 +86,10 @@ function symbolMap() {
         var country = svg.append("g").attr("id", "country");
         // var states  = svg.append("g").attr("id", "states");
         var symbols = svg.append("g").attr("id", "dots");
+
+        var colorscale = d3.scale.linear()
+            .domain(d3.extent(values,depth))
+            .range(colorbrewer.RdBu[5]);
 
         // show that only 1 feature for land
         console.log(topojson.feature(map, map.objects.land));
@@ -128,6 +133,10 @@ function symbolMap() {
                 return projection([d.longitude, d.latitude])[1];
             })
             .classed({"symbol": true})
+            .style("fill",function(d,i){
+                return colorscale(depth(d))
+            })
+            .style("fill-opacity",.5)
             .on("mouseover", showHighlight)
             .on("mouseout", hideHighlight);
     }
