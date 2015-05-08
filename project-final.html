@@ -163,7 +163,7 @@ var main1 = function(){
           .attr("d", path)
           .attr("type",function(d){return typeById.get(d.id);})
           .style("fill", function(d){return colorscale(typeById.get(d.id));})
-          .style("opacity", function(d){return rateById.get(d.id)/3;})
+          .style("opacity", function(d){return rateById.get(d.id)/3 + .1;})
           .on("click", clicked)
           .on("mouseover", function(d){
             var absoluteMousePos = d3.mouse(this);
@@ -216,7 +216,7 @@ var main1 = function(){
                         d3.selectAll(".counties").selectAll("path")
                             .style("opacity",function(d){
                                 if(typeById.get(d.id)===colorscale.domain()[i]){
-                                    return rateById.get(d.id)/3;
+                                    return rateById.get(d.id)/3 + .1;
                                 }
                                 else{return .01}
                             });
@@ -232,7 +232,7 @@ var main1 = function(){
                     })
                     .on("mouseout",function(){
                         d3.selectAll(".counties").selectAll("path")
-                        .style("opacity", function(d){ return rateById.get(d.id)/3;});
+                        .style("opacity", function(d){ return rateById.get(d.id)/3 + .1;});
                     });
             svg.append("text")
                     .attr("x", 480 + i*50)
