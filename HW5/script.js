@@ -51,7 +51,7 @@ function symbolMap() {
     // gets the value property from the dataset
     // for our example, we need to reset this!
     var value = function(d) { return d.value; };
-    var depth = function(d) { return d.depth; };
+    var depth = function(d) { return -d.depth; };
 
     function chart(id) {
         if (map === null || values === null) {

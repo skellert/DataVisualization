@@ -95,8 +95,12 @@ var main1 = function(){
         .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
     var colorscale = d3.scale.ordinal()
-            .domain(["Injury","Cancer","Murder","Suicide","HIV","Heart Disease"])
-            .range(colorbrewer.Set2[6]);
+            .domain(["Homicide","Suicide","Cancer","HIV","Heart Disease"])
+            .range(colorbrewer.Set1[5]);
+
+    var opacscale = d3.scale.linear()
+              .domain([0,5])
+              .range([0,1]);
 
     var projection = d3.geo.albersUsa()
         .scale(1280)
@@ -163,7 +167,7 @@ var main1 = function(){
           .attr("d", path)
           .attr("type",function(d){return typeById.get(d.id);})
           .style("fill", function(d){return colorscale(typeById.get(d.id));})
-          .style("opacity", function(d){return rateById.get(d.id)/3 + .1;})
+          .style("opacity", function(d){return opacscale(rateById.get(d.id));})
           .on("click", clicked)
           .on("mouseover", function(d){
             var absoluteMousePos = d3.mouse(this);
@@ -207,16 +211,16 @@ var main1 = function(){
 
         colorscale.range().forEach(function (c,i){
             svg.append("rect")
-                    .attr("x", 480 + i*50)
+                    .attr("x", 480 + i*60)
                     .attr("y", height)
-                    .attr("width", 50)
+                    .attr("width", 60)
                     .attr("height", 15)
                     .style("fill", c)
                     .on("mouseover",function(){
                         d3.selectAll(".counties").selectAll("path")
                             .style("opacity",function(d){
                                 if(typeById.get(d.id)===colorscale.domain()[i]){
-                                    return rateById.get(d.id)/3 + .1;
+                                    return opacscale(rateById.get(d.id));
                                 }
                                 else{return .01}
                             });
@@ -232,10 +236,10 @@ var main1 = function(){
                     })
                     .on("mouseout",function(){
                         d3.selectAll(".counties").selectAll("path")
-                        .style("opacity", function(d){ return rateById.get(d.id)/3 + .1;});
+                        .style("opacity", function(d){ return opacscale(rateById.get(d.id));});
                     });
             svg.append("text")
-                    .attr("x", 480 + i*50)
+                    .attr("x", 480 + i*60)
                     .attr("y", height - 10)
                     .text(colorscale.domain()[i]);
         });
