@@ -171,9 +171,9 @@ var main1 = function(){
           .on("click", clicked)
           .on("mouseover", function(d){
             var absoluteMousePos = d3.mouse(this);
-            var tipbox = {h:70,w:150,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25};
+            var tipbox = {h:70,w:200,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25};
             if(centered){
-              tipbox = {h:70/4.0,w:150/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0}
+              tipbox = {h:70/4.0,w:200/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0}
             };
             g.append("g")
                 .attr("class","caption")
