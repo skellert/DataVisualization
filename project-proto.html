@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/colorbrewer.js"></script>
+    <script type="text/javascript" src="./tooltip.js"></script>
+    <style>
+    .counties {
+      fill: none;
+      stroke: #fff;
+    }
+
+    .states {
+      fill: none;
+      stroke: #fff;
+      stroke-linejoin: round;
+    }
+    .background {
+      fill: none;
+      pointer-events: all;
+    }
+
+    #states {
+      fill: #F8F8FF;
+    }
+
+    #states .active {
+      fill: orange;
+    }
+
+    #state-borders {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 1.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+    .tooltip{ background-color:rgba(68,136,187,0.5);
+              margin: 10px;
+              height: 50px;
+              width: 150px;
+              padding-left: 10px; 
+              padding-top: 10px;
+            -webkit-border-radius:10px;
+            -moz-border-radius:10px;
+            border-radius:10px;
+            }
+    </style>    
+    <title>Project Prototype</title>
+</head>
+<body align = "left">
+    <script src="queue.js"></script>  
+    <script src="topojson.js"></script>  
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Project Prototype</h1>
+        </div>
+    </div>
+
+<div align = "left", id = "data">
+      <ol><ol>Scott Kellert</ol>
+      <ol><a href="https://github.com/skellert/DataVisualization">Github</a></ol>
+      <ol>Dataset Summary
+        <ol>My dataset is United States county level deaths by type, race, and ageband. The data is provided by the US Department of Health. The goal for visualizing this data is to identify any trends in death rates by the given categorical data. <a href="http://skellert.github.io/DataVisualization/project.html">Project Dataset</a></ol></ol>
+      <ol>Sketch Summary
+      <ol>I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation. The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups. <a href="http://skellert.github.io/DataVisualization/project-sketch.html">Project Sketch</a></ol></ol>
+  <ol>
+</div>
+<div id = "countymap", align = "center">
+</div>
+
+<script>
+
+var main1 = function(){
+    var width = 960,
+        height = 600,
+        centered;
+
+    var rateById = d3.map();
+    var typeById = d3.map();
+    var countyById = d3.map();
+    var popById = d3.map();
+
+    var quantize = d3.scale.quantize()
+        .domain([-2,5])
+        .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+
+    var colorscale = d3.scale.ordinal()
+            .domain(["Homicide","Suicide","Cancer","HIV","Heart Disease"])
+            .range(colorbrewer.Set1[5]);
+
+    var opacscale = d3.scale.linear()
+              .domain([0,5])
+              .range([0,1]);
+
+    var projection = d3.geo.albersUsa()
+        .scale(1280)
+        .translate([width / 2, height / 2]);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+
+
+    var svg = d3.select("#countymap").append("svg")
+        .attr("width", width + 150)
+        .attr("height", height + 50)
+        .style("border-color", "#bbbbbb")
+        .style("border-width", 1)
+        .style("border-style", "solid");
+
+    svg.append("text")
+        .attr("x", width/2)
+        .attr("y", 30)
+        .attr("text-anchor", "middle")
+        .text("Most Overrepresented Type of Death by County");
+
+    var g = svg.append("g");
+
+    queue()
+        .defer(d3.json, "us.json")
+        .defer(d3.csv, "health.csv", function(d) { rateById.set(d.id, +d.Max_Value);
+                                                   typeById.set(d.id, d.Max_Type); 
+                                                    countyById.set(d.id, d.CHSI_County_Name); 
+                                                    popById.set(d.id, +d.Population); })
+        .await(ready);
+
+    function ready(error, us) {
+
+      g.insert("path", ".graticule")
+          .datum(topojson.feature(us, us.objects.land))
+          .attr("class", "land")
+          .attr("d", path);
+
+      g.insert("path", ".graticule")
+          .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b && !(a.id / 1000 ^ b.id / 1000); }))
+          .attr("class", "county-boundary")
+          .attr("d", path);
+
+      g.append("g")
+          .attr("id", "states")
+        .selectAll("path")
+          .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+          .attr("d", path)
+          .on("click", clicked);
+
+      g.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+          .attr("id", "state-borders")
+          .attr("d", path);
+
+      g.append("g")
+          .attr("class", "counties")
+        .selectAll("path")
+          .data(topojson.feature(us, us.objects.counties).features)
+        .enter().append("path")
+          .attr("d", path)
+          .attr("type",function(d){return typeById.get(d.id);})
+          .style("fill", function(d){return colorscale(typeById.get(d.id));})
+          .style("opacity", function(d){return opacscale(rateById.get(d.id));})
+          .on("click", clicked)
+          .on("mouseover", function(d){
+            var absoluteMousePos = d3.mouse(this);
+            var tipbox = {h:70,w:200,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25};
+            if(centered){
+              tipbox = {h:70/4.0,w:200/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0}
+            };
+            g.append("g")
+                .attr("class","caption")
+                .append("rect")
+                .attr("x",absoluteMousePos[0] + tipbox.bx)
+                .attr("y",absoluteMousePos[1] + tipbox.by)
+                .attr("height",tipbox.h)
+                .attr("width",tipbox.w)
+                .style("fill", "steelblue")
+                .style("opacity", .9);
+            g.append("g")
+                .attr("class","caption")
+                .append("text")
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty1)
+                .text("County: "+ countyById.get(d.id))
+                .style("font-size",tipbox.t);
+            g.append("g")
+                .attr("class","caption")
+                .append("text")
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty2)
+                .text("Population: "+ popById.get(d.id))
+                .style("font-size",tipbox.t);
+            g.append("g")
+                .attr("class","caption")
+                .append("text")
+                .attr("x",absoluteMousePos[0] + tipbox.tx)
+                .attr("y",absoluteMousePos[1] + tipbox.ty3)
+                .text("Type: "+ typeById.get(d.id))
+                .style("font-size",tipbox.t);})
+          .on("mouseout",function(){
+            d3.selectAll(".caption").remove();
+          });
+
+        colorscale.range().forEach(function (c,i){
+            svg.append("rect")
+                    .attr("x", 480 + i*60)
+                    .attr("y", height)
+                    .attr("width", 60)
+                    .attr("height", 15)
+                    .style("fill", c)
+                    .on("mouseover",function(){
+                        d3.selectAll(".counties").selectAll("path")
+                            .style("opacity",function(d){
+                                if(typeById.get(d.id)===colorscale.domain()[i]){
+                                    return opacscale(rateById.get(d.id));
+                                }
+                                else{return .01}
+                            });
+                    })
+                    .on("click",function(){
+                        d3.selectAll(".counties").selectAll("path")
+                            .style("opacity",function(d){
+                                if(typeById.get(d.id)===colorscale.domain()[i]){
+                                    return 1;
+                                }
+                                else{return .01}
+                            });
+                    })
+                    .on("mouseout",function(){
+                        d3.selectAll(".counties").selectAll("path")
+                        .style("opacity", function(d){ return opacscale(rateById.get(d.id));});
+                    });
+            svg.append("text")
+                    .attr("x", 480 + i*60)
+                    .attr("y", height - 10)
+                    .text(colorscale.domain()[i]);
+        });
+
+    };
+
+    d3.select(self.frameElement).style("height", height + "px");
+
+
+
+    function clicked(d) {
+      var x, y, k;
+      if (d && centered !== d) {
+        var centroid = path.centroid(d);
+        x = centroid[0];
+        y = centroid[1];
+        k = 4;
+        centered = d;
+      } else {
+        x = width / 2;
+        y = height / 2;
+        k = 1;
+        centered = null;
+      }
+
+      g.selectAll("path")
+          .classed("active", centered && function(d) { return d === centered; });
+
+      g.transition()
+          .duration(750)
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+          .style("stroke-width", 1.5 / k + "px");
+    }};
+
+main1();
+
+</script>
