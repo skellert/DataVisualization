@@ -60,35 +60,64 @@
 <body align = "left">
     <script src="queue.js"></script>  
     <script src="topojson.js"></script>  
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle Navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">MSN 622</a>
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#homework">Homework</a></li>
+                <li><a href="#project">Project</a></li>
+                <li><a href="#participation">Participation</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
     <div class="jumbotron">
-        <div class="container">
-            <h1>Project Prototype</h1>
+        <div class="container", align = "center">
+            <h1>Final Project</h1>
         </div>
     </div>
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+  <div class="col-xs-6 col-md-9", id = "countymap"></div>
+</div>
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-11"><p class = "lead"> The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups.</p></div>
+</div>
 
-<div align = "left", id = "data">
-      <ol><ol>Scott Kellert</ol>
-      <ol><a href="https://github.com/skellert/DataVisualization">Github</a></ol>
-      <ol>Dataset Summary
-        <ol>My dataset is United States county level deaths by type, race, and ageband. The data is provided by the US Department of Health. The goal for visualizing this data is to identify any trends in death rates by the given categorical data. <a href="http://skellert.github.io/DataVisualization/project.html">Project Dataset</a></ol></ol>
-      <ol>Sketch Summary
-      <ol>I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation. The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups. <a href="http://skellert.github.io/DataVisualization/project-sketch.html">Project Sketch</a></ol></ol>
-  <ol>
-</div>
-<div id = "countymap", align = "center">
-</div>
 
 <script>
 
 var main1 = function(){
-    var width = 960,
-        height = 600,
+    var width = 960*.9,
+        height = 600*.9,
         centered;
 
     var rateById = d3.map();
     var typeById = d3.map();
     var countyById = d3.map();
     var popById = d3.map();
+    var homById = d3.map();
+    var suiById = d3.map();
+    var hivById = d3.map();
+    var canById = d3.map();
+    var hdById = d3.map();
 
     var quantize = d3.scale.quantize()
         .domain([-2,5])
@@ -103,7 +132,7 @@ var main1 = function(){
               .range([0,1]);
 
     var projection = d3.geo.albersUsa()
-        .scale(1280)
+        .scale(1280*.9)
         .translate([width / 2, height / 2]);
 
     var path = d3.geo.path()
@@ -131,7 +160,12 @@ var main1 = function(){
         .defer(d3.csv, "health.csv", function(d) { rateById.set(d.id, +d.Max_Value);
                                                    typeById.set(d.id, d.Max_Type); 
                                                     countyById.set(d.id, d.CHSI_County_Name); 
-                                                    popById.set(d.id, +d.Population); })
+                                                    popById.set(d.id, +d.Population);
+                                                    homById.set(d.id, +d.Homicide);
+                                                    suiById.set(d.id, +d.Suicide);
+                                                    hivById.set(d.id, +d.HIV);
+                                                    canById.set(d.id, +d.Cancer);
+                                                    hdById.set(d.id, +d["Heart Disease"]); })
         .await(ready);
 
     function ready(error, us) {
@@ -170,10 +204,11 @@ var main1 = function(){
           .style("opacity", function(d){return opacscale(rateById.get(d.id));})
           .on("click", clicked)
           .on("mouseover", function(d){
+            var lookups = [homById,suiById,canById,hivById,hdById];
             var absoluteMousePos = d3.mouse(this);
-            var tipbox = {h:70,w:200,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25};
+            var tipbox = {h:130,w:200,t:"100%",bx:10,by:-35,tx:15,ty1:-15,ty2:5,ty3:25,rs:30,ry:120};
             if(centered){
-              tipbox = {h:70/4.0,w:200/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0}
+              tipbox = {h:130/4.0,w:200/4.0,t:"25%",bx:10/4.0,by:-35/4.0,tx:15/4.0,ty1:-15/4.0,ty2:5/4.0,ty3:25/4.0,rs:30/4.0,ry:120/4.0}
             };
             g.append("g")
                 .attr("class","caption")
@@ -182,7 +217,7 @@ var main1 = function(){
                 .attr("y",absoluteMousePos[1] + tipbox.by)
                 .attr("height",tipbox.h)
                 .attr("width",tipbox.w)
-                .style("fill", "steelblue")
+                .style("fill", "#F0F8FF")
                 .style("opacity", .9);
             g.append("g")
                 .attr("class","caption")
@@ -204,14 +239,23 @@ var main1 = function(){
                 .attr("x",absoluteMousePos[0] + tipbox.tx)
                 .attr("y",absoluteMousePos[1] + tipbox.ty3)
                 .text("Type: "+ typeById.get(d.id))
-                .style("font-size",tipbox.t);})
+                .style("font-size",tipbox.t);
+            colorscale.range().forEach(function (c,i){
+              g.append("g").attr("class","caption")
+                  .append("rect")
+                  .attr("x",absoluteMousePos[0] + tipbox.tx + i*tipbox.rs)
+                  .attr("y",absoluteMousePos[1] + tipbox.by + tipbox.ry - lookups[i].get(d.id) * tipbox.ty2*2)
+                  .attr("height",lookups[i].get(d.id) * tipbox.ty2*2)
+                  .attr("width",tipbox.ty3)
+                  .style("fill", c);
+                  });})
           .on("mouseout",function(){
             d3.selectAll(".caption").remove();
           });
 
         colorscale.range().forEach(function (c,i){
             svg.append("rect")
-                    .attr("x", 480 + i*60)
+                    .attr("x", 480*.9 + i*60)
                     .attr("y", height)
                     .attr("width", 60)
                     .attr("height", 15)
@@ -239,7 +283,7 @@ var main1 = function(){
                         .style("opacity", function(d){ return opacscale(rateById.get(d.id));});
                     });
             svg.append("text")
-                    .attr("x", 480 + i*60)
+                    .attr("x", 480*.9 + i*60)
                     .attr("y", height - 10)
                     .text(colorscale.domain()[i]);
         });
