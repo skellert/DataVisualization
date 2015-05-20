@@ -1,0 +1,118 @@
+
+<html>
+<head>
+  <title>Datavore Scatter Plot Matrix Demo</title>
+  <script type="text/javascript" src="js/d3.min.js"></script>
+  <script type="text/javascript" src="js/dv.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/dv.profile.js"></script>
+  <style type="text/css">
+a {
+  color: black;
+}
+a:hover {
+  color: red;
+}
+svg {
+  border: 1px solid #ccc;
+  padding: 0px;
+  margin: 5px;
+}
+rect, rect.base {
+  fill: steelblue;
+}
+rect.brush {
+  fill: orange;
+}
+.left {
+  width: 315;
+  float: left;
+}
+  </style>
+</head>
+<body>
+  <script src="queue.js"></script> 
+<strong>Interactive Binned Scatterplot Matrix</strong>
+&nbsp;&nbsp;
+Dimensions: <select id="dims" onchange="update();">
+ <option value="3">3</option>
+ <option value="4">4</option>
+ <option value="5" selected>5</option>
+</select>
+Bins: <select id="bins" onchange="update();">
+ <option value="10">10</option>
+ <option value="20" selected>20</option>
+ <option value="30">30</option>
+</select>
+Data Points: <select id="rows" onchange="update();">
+ <option value="10000">10k</option>
+ <option value="100000" selected>100k</option>
+ <option value="1000000">1M</option>
+</select>
+<div>
+  <span id="d00"></span>
+  <span id="d01"></span>
+  <span id="d02"></span>
+  <span id="d03"></span>
+  <span id="d04"></span><br/>
+  <span id="d10"></span>
+  <span id="d11"></span>
+  <span id="d12"></span>
+  <span id="d13"></span>
+  <span id="d14"></span><br/>
+  <span id="d20"></span>
+  <span id="d21"></span>
+  <span id="d22"></span>
+  <span id="d23"></span>
+  <span id="d24"></span><br/>
+  <span id="d30"></span>
+  <span id="d31"></span>
+  <span id="d32"></span>
+  <span id="d33"></span>
+  <span id="d34"></span><br/>
+  <span id="d40"></span>
+  <span id="d41"></span>
+  <span id="d42"></span>
+  <span id="d43"></span>
+  <span id="d44"></span><br/>
+</div>
+<small>Powered by <a href="https://github.com/StanfordHCI/datavore">Datavore</a> and <a href="http://mbostock.github.com/d3/">D3</a>.</small>
+<script type="text/javascript">
+var data, sz = 150;
+
+function update() {
+    var dims = d3.select("#dims").property("value");
+    var bins = d3.select("#bins").property("value");
+    var rows = d3.select("#rows").property("value");
+    run({N:rows, bins:bins, dim:dims});
+}
+
+function datagen(opt) {
+  var data = [];
+    d3.csv("health_scatter.csv", function(d) { console.log(d.Cancer); });
+    console.log(data)
+    return data;
+}
+
+// d3.csv("health.csv",function(d){
+//   return data =
+// }
+
+function run(opt) {
+    d3.selectAll("div span").html("");
+    var data = datagen(opt),
+        db = dv.profile(data),
+        op = {bins:opt.bins, width:sz, height:sz};
+    for (var i=0; i<data.length; ++i) for (var j=0; j<data.length; ++j) {
+        if (i == j) {
+            db.plot("histogram", ["d",i,j].join(""), [i], op);
+        } else {
+            db.plot("scatter", ["d",i,j].join(""), [j,i], op);
+        }
+    }
+    db.init();
+}
+run({N:100000,  bins:20, dim:5});
+</script>
+</body>
+</html>

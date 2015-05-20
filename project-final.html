@@ -11,7 +11,6 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/colorbrewer.js"></script>
-    <script type="text/javascript" src="./tooltip.js"></script>
     <style>
     .counties {
       fill: none;
@@ -54,6 +53,37 @@
             -moz-border-radius:10px;
             border-radius:10px;
             }
+    .axis,
+    .frame {
+      shape-rendering: crispEdges;
+    }
+
+    .axis line {
+      stroke: #ddd;
+    }
+
+    .axis path {
+      display: none;
+    }
+
+    .frame {
+      fill: none;
+      stroke: #aaa;
+    }
+
+    circle {
+      fill-opacity: .5;
+    }
+
+    circle.hidden {
+      fill: #ccc !important;
+    }
+
+    .extent {
+      fill: #000;
+      fill-opacity: .125;
+      stroke: #fff;
+    }
     </style>    
     <title>Project Prototype</title>
 </head>
@@ -101,6 +131,21 @@
   <div class="col-xs-6 col-md-11"><p class = "lead"> The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups.</p></div>
 </div>
 
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-7", id = "heatmap"></div>
+  <div class="col-xs-6 col-md-3", id = "heatmap"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+</div>
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-11"><p class = "lead"> The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups.</p></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+  <div class="col-xs-6 col-md-9", id = "scatter"></div>
+</div>
 
 <script>
 
@@ -318,6 +363,267 @@ var main1 = function(){
           .style("stroke-width", 1 / k + "px");
     }};
 
+var main2 = function(){
+  var margin = { top: 50, right: 0, bottom: 0, left: 50 },
+          width = 960 - margin.left - margin.right,
+          height = 250 - margin.top - margin.bottom,
+          gridSize = Math.floor(width / 7),
+          legendElementWidth = gridSize,
+          buckets = 5,
+          colors = ["#fef0d9","#fdd49e","#fdbb84","#fc8d59","#ef6548","#d7301f","#990000"]
+          race = ["White","Black","Latino","Other"],
+          type = ["Homicide","Suicide","Cancer","Heart Disease","HIV"];
+  d3.csv("health_heat.csv",function(d){
+    return{
+            race: +d.Race_ID,
+            type: +d.Type_ID,
+            value: +d.Deaths
+    };
+  },function(data){
+    var colorScale = d3.scale.quantile()
+                      .domain([0, buckets - 1, d3.max(data, function (d) { return d.value; })])
+                      .range(colors);
+
+          var svg = d3.select("#heatmap").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var raceLabels = svg.selectAll(".raceLabel")
+              .data(race)
+              .enter().append("text")
+                .text(function (d) { return d; })
+                .attr("x", 0)
+                .attr("y", function (d, i) { return i * gridSize/4; })
+                .style("text-anchor", "end")
+                .attr("transform", "translate(-6," + gridSize/8 + ")")
+                .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+
+          var typeLabels = svg.selectAll(".typeLabel")
+              .data(type)
+              .enter().append("text")
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return i * gridSize; })
+                .attr("y", 0)
+                .style("text-anchor", "middle")
+                .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+                .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+
+          var heatMap = svg.selectAll(".race")
+              .data(data)
+              .enter().append("rect")
+              .attr("x", function(d,i) { return (d.type - 1) * gridSize; })
+              .attr("y", function(d,i) { return (d.race - 1) * gridSize/4; })
+              .attr("rx", 4)
+              .attr("ry", 4)
+              .attr("class", "hour bordered")
+              .attr("width", gridSize)
+              .attr("height", gridSize/4)
+              .style("fill", colors[0]);
+
+          heatMap.transition().duration(200)
+              .style("fill", function(d) { return colorScale(d.value); });
+
+          heatMap.append("title").text(function(d) { return d.value; });
+              
+          var legend = svg.selectAll(".legend")
+              .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+              .enter().append("g")
+              .attr("class", "legend");
+
+          legend.append("rect")
+            .attr("x", function(d, i) { return legendElementWidth * i * .6; })
+            .attr("y", height - 65)
+            .attr("width", legendElementWidth*.6)
+            .attr("height", gridSize / 4)
+            .style("fill", function(d, i) { return colors[i]; });
+
+          legend.append("text")
+            .attr("class", "mono")
+            .text(function(d) { return "≥ " + Math.round(d); })
+            .attr("x", function(d, i) { return legendElementWidth * i * .6; })
+            .attr("y", height - 65 + gridSize/3);
+  })
+};
+
+var main3 = function(){
+  var width = 960,
+    size = 150,
+    padding = 30;
+
+  var x = d3.scale.linear()
+      .range([padding / 2, size - padding / 2]);
+
+  var y = d3.scale.linear()
+      .range([size - padding / 2, padding / 2]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .ticks(5);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(5);
+
+  var color = d3.scale.ordinal()
+          .domain(["South","North","West","Midwest","Northeast"])
+          .range(colorbrewer.Set1[5]);
+
+  d3.csv("health_scatter.csv", function(error, data) {
+    var domainByTrait = {},
+        traits = d3.keys(data[0]).filter(function(d) { return d !== "Region"; }),
+        n = traits.length;
+
+    traits.forEach(function(trait) {
+      domainByTrait[trait] = d3.extent(data, function(d) { return +d[trait]; });
+    });
+
+    xAxis.tickSize(size * n);
+    yAxis.tickSize(-size * n);
+
+    var brush = d3.svg.brush()
+        .x(x)
+        .y(y)
+        .on("brushstart", brushstart)
+        .on("brush", brushmove)
+        .on("brushend", brushend);
+
+    var svg = d3.select("#scatter").append("svg")
+        .attr("font","10px sans-serif")
+        .attr("padding", "20px")
+        .attr("width", size * n + padding)
+        .attr("height", size * n + padding)
+      .append("g")
+        .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
+
+    svg.selectAll(".x.axis")
+        .data(traits)
+      .enter().append("g")
+        .attr("class", "x axis")
+        .attr("transform", function(d, i) { return "translate(" + (n - i - 1) * size + ",0)"; })
+        .each(function(d) { x.domain(domainByTrait[d]); d3.select(this).call(xAxis); });
+
+    svg.selectAll(".y.axis")
+        .data(traits)
+      .enter().append("g")
+        .attr("class", "y axis")
+        .attr("transform", function(d, i) { return "translate(0," + i * size + ")"; })
+        .each(function(d) { y.domain(domainByTrait[d]); d3.select(this).call(yAxis); });
+
+    var clicked = false;
+    color.domain().forEach(function(d,i){
+
+        svg.append("rect")
+        .attr("x",50 + i*60)
+        .attr("y", 5)
+        .attr("width", 50)
+        .attr("height",10)
+        .style("fill", color.range()[i])
+        .on("click",function(){
+          if(clicked){
+            clicked = false;
+            d3.selectAll("circle")
+            .style("opacity", .5);
+          }
+          else{
+            clicked = true;
+          d3.selectAll("circle")
+            .style("opacity", function(t){
+              if(t.Region === d){
+                return .5;}
+              else{
+                return 0;};
+            })};
+        });
+
+        svg.append("text")
+        .attr("x",50 + i*60)
+        .attr("y", 0)
+        .text(d);        
+
+      });
+
+    var cell = svg.selectAll(".cell")
+        .data(cross(traits, traits))
+      .enter().append("g")
+        .attr("class", "cell")
+        .attr("transform", function(d) { return "translate(" + (n - d.i - 1) * size + "," + d.j * size + ")"; })
+        .each(plot);
+
+    // Titles for the diagonal.
+    cell.filter(function(d) { return d.i === d.j; }).append("text")
+        .attr("x", padding)
+        .attr("y", padding-10)
+        .attr("dy", ".71em")
+        .text(function(d) { return d.x; });
+
+    cell.call(brush);
+
+    function plot(p) {
+      var cell = d3.select(this);
+
+      x.domain(domainByTrait[p.x]);
+      y.domain(domainByTrait[p.y]);
+
+      cell.append("rect")
+          .attr("class", "frame")
+          .attr("x", padding / 2)
+          .attr("y", padding / 2)
+          .attr("width", size - padding)
+          .attr("height", size - padding);
+
+      cell.selectAll("circle")
+          .data(data)
+        .enter().append("circle")
+          .attr("cx", function(d) { return x(d[p.x]); })
+          .attr("cy", function(d) { return y(d[p.y]); })
+          .attr("r", 3)
+          .style("fill", function(d) { return color(d.Region); });
+
+
+    }
+
+    var brushCell;
+
+    // Clear the previously-active brush, if any.
+    function brushstart(p) {
+      if (brushCell !== this) {
+        d3.select(brushCell).call(brush.clear());
+        x.domain(domainByTrait[p.x]);
+        y.domain(domainByTrait[p.y]);
+        brushCell = this;
+      }
+    }
+
+    // Highlight the selected circles.
+    function brushmove(p) {
+      var e = brush.extent();
+      svg.selectAll("circle").classed("hidden", function(d) {
+        return e[0][0] > d[p.x] || d[p.x] > e[1][0]
+            || e[0][1] > d[p.y] || d[p.y] > e[1][1];
+      });
+    }
+
+    // If the brush is empty, select all circles.
+    function brushend() {
+      if (brush.empty()) svg.selectAll(".hidden").classed("hidden", false);
+    }
+
+    function cross(a, b) {
+      var c = [], n = a.length, m = b.length, i, j;
+      for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
+      return c;
+    }
+
+    d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
+});
+}
+
 main1();
+main2();
+main3();
 
 </script>
