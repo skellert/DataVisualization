@@ -99,19 +99,19 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">MSN 622</a>
+            <a class="navbar-brand" href="http://skellert.github.io/DataVisualization/">MSN 622</a>
         </div>
 
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#homework">Homework</a></li>
-                <li><a href="#project">Project</a></li>
-                <li><a href="#participation">Participation</a></li>
+                <li><a href="http://skellert.github.io/DataVisualization/#homework">Homework</a></li>
+                <li><a href="http://skellert.github.io/DataVisualization/#project">Project</a></li>
+                <li><a href="http://skellert.github.io/DataVisualization/#participation">Participation</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="http://skellert.github.io/DataVisualization/#about">About</a></li>
+                <li><a href="http://skellert.github.io/DataVisualization/#contact">Contact</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -123,28 +123,93 @@
     </div>
 <div class="row">
   <div class="col-xs-6 col-sm-3 col-md-1"></div>
-  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">The plot to the right gives the most overrepresented type of death by county for every county in the United States. Each color represents one of five death types: Homicide, Suicide, Cancer, HIV, and Heart Disease. The opacity of a county indicates how extreme this county is relative to the national average. This metric is defined by the statistical deviation</p></div>
   <div class="col-xs-6 col-md-9", id = "countymap"></div>
 </div>
 <div class="row">
   <div class="col-xs-6 col-sm-3 col-md-1"></div>
-  <div class="col-xs-6 col-md-11"><p class = "lead"> The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups.</p></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead">in deaths per 100,000 people from the national average. Hovering over a county will give the name and population as well as a bar chart showing the magnitudes of other significant death types. Clicking on a county will zoom on that region. The legend provides the ability to highlight just those counties affiliated with that death type and clicking will shade all of those counties to be more visible. With these features we can see that homicide occurs most frequently in the south while suicide tends to occur in the north. Cancer is abundant all over the country but clusters in the Midwest. HIV is focused in the gulf and Southeast but this is largely due to data collection issues. Finally, heart disease is the biggest problem throughout the center of the country and in the South.</p></div>
 </div>
 
 <div class="row">
   <div class="col-xs-6 col-sm-3 col-md-1"></div>
   <div class="col-xs-6 col-md-7", id = "heatmap"></div>
-  <div class="col-xs-6 col-md-3", id = "heatmap"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+  <div class="col-xs-6 col-md-3", id = "heatmap"><p class = "lead">This visualization to the left gives a heatmap of deaths per 100,000 people in the United States by race and type of death. As can be seen in the legend, darker shades of red indicate a greater number of deaths per 100,000.</p></div>
 </div>
 <div class="row">
   <div class="col-xs-6 col-sm-3 col-md-1"></div>
-  <div class="col-xs-6 col-md-11"><p class = "lead"> The second visualization is a scatterplot matrix of the different death types by county. The goal of this visualization is to show which categories are most closely correlated. Finally, I was going to show a time series of deaths by age band. However, the agebands are not used for all death types and are not very granular. I am replacing this graph with a heatmap that shows the death rate by race and death type. This visualization will show which types of death are most frequent across racial groups.</p></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> This graph allows for for two easy findings. First, by looking at horizontal trends, is that cancer and heart disease affect the most amount of people regardless of race. The second is to look at each vertical and find the by race trands. You can see that the black and latino populations are disproportionately affected by homicide while white and other(which is mostly asian) show a similar trend in suicide. Cancer and heart disease are extremely correlated by race and the black population the most. Finally, the black population is again most disproportionately affected by HIV.</p></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-4"></div>
+  <div class="col-xs-6 col-sm-3 col-md-8"><p class = "lead"><b>Scatter Plot Matrix of Death Types by Region</b></p></div>
 </div>
 
 <div class="row">
   <div class="col-xs-6 col-sm-3 col-md-1"></div>
-  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">I plan on using three visualizations to allow a user to explore the data set. The first visualization that is the most important is a county map of the United States. Each county is encoded in two ways. The color is by which type of death is most over represented in that county and the opacity of that county is the magnitude of the overrepresentation.</p></div>
+  <div class="col-xs-6 col-sm-3 col-md-2"><p class = "lead">The final visualization is a scatter plot matrix for seeing the relationships between differenent types of death in the United States. Each point in each scatter plot represents a county and its statistical deviation from the national average in that category of death. The points are colored by region and clicking on the legend item corresponding to that region will show only the counties in that region. Additionally, brushing a scatter plot will limit the matrix to just those points in each plot.</p></div>
   <div class="col-xs-6 col-md-9", id = "scatter"></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> The biggest takeaway from this viualization is how stongly correlated cancer and heart disease are. The plot of those two death types forms a nearly perfect linear relationship. Other comparisons are much less clear. However, HIV seems to share some of the relationship with cancer/heart disease. The least related are suicide and homicide which show the closest to a negative trend of any pair. This is expected from what we saw in the map visulization.</p></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Techniques</b></p>
+    <p class = "lead">For my first visualization I encoded by county death rates as a chloropleth. In this case each row of the data represents a county in the United States. The pertinent columns were county FIPS codes which give geographic information on where to place the data. Then there were columns for the amount of statistical deviation above the mean for each of five death types. The color in the chloropleth is linked to the category of the maximum of these values. The opacity is determined by the value of the maximum.</p>
+    <p class = "lead">I struggled with lie factor in many ways for this visualization. It is very difficult to pick five colors that all draw equal visual weight and the encoding of missing data was essentially impossible. The biggest lie factor is in county size. Large counties, despite potentially small populations make up way more of the graph than a major county like San Francisco which is nearly invisible. This is partially helped by the zoom feature but not completely. This graph shines in its data ink ratio and data density. There is an extraordinary amount of data packed into the map and almost all the ink is being used to convey that data. Only the legend is not data driven but it is immensely important for interaction.</p>
+    <p class = "lead">This graph excels at viewing geographic clusters. These clusters are designed to be seen through the coloring of counties and can be highlighted with the interactive legend. This was the best way to get a sense of regional trends in death types.</p>
+    <p class = "lead">For my second visualization I encoded national death rates as a heatmap by race and type. Each row of the data is a race/type combination and the column being encoded by shades of red is the count of deaths per 100,000 people in that category.</p>
+    <p class = "lead">The main source of potential lie factor would be in the order of categories. However, I did them randomly and do not think there is any misleading information as a result of the order. Additionally, the scale of the shading is non-linear. Data ink ratio is high as this is a fairly simple graph with only squares represnting data points or legend items. The data density could be a little better as there are only 20 values encoded here.</p>
+    <p class = "lead">This graph excels at identifying outliers within a specific category, either race or type. For example, we can easily find the extreme values of a death type with in a certain racial group or the racial group disproportionately affected by a death type.</p>
+    <p class = "lead">For my final visualization I encoded by county death rates as a scatter plot matrix. Because of the matrix format there are multiple layers of rows and columns encoded here. The outer rows and columns give the death types to be compared in each cell of the matrix. Within each cell each row represents a county and the columns are statistical deviations from the mean for two death types in the form of a point on a scatter plot. The color of each point is determined by its geographic region.</p>
+    <p class = "lead">The biggest source of lie factor is in the stacking of points on the scatterplot. I reduced opacity and size of the points as much as possible to reduce this issue while still making individual points visible. Data density and data ink ratio are very high for this plot. There is a very large amount of high dimensional data show in the matrix. The main reduction in data ink ratio is in the grid lines but these are important for maintaining context throughout the matrix.</p>
+    <p class = "lead">This graph excels at viewing patterns between different death types. It makes it very apparent that there is a strong linear realtionship between cancer and heart disease, for example.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Interactivity</b></p>
+    <p class = "lead">For my first visualization I implemented a lot of interactivity to maximize the information a user could extract. On hover over of any county there is a tooltip that will give county name, population, death category, and a bar chart for comparing all of the significant death types in that county. Clicking on a county zooms in on that region. Hovering over the legend highlights only that death type and clicking darkens every one of those counties. All of these either provide more context for a county or help highlight the geographic trends in the visualization.</p>
+    <p class = "lead">The heatmap lacked much opportunity for interactivity so rather than force something there is just a tooltip for viewing the exact value of a cell.</p>
+    <p class = "lead">The scatter plot matrix has two major forms of interactivity. The first is a filtering method implemented by clicking on the legend. This limits the matrix to just points from that region. The second is also for filtering but this time is implemented as a brush to view clusters of data from one plot, exclusively over the entire plot.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Feedback</b></p>
+    <p class = "lead">I only had the chloropleth map campleted for my prototype and there were two key pieces of feedback that I wanted to address. The first was to add a bar chart to the tool tip which I did and looks great. The second was to clean up my methodology for defining overrepresentation. This was difficult, but I think ultimately led to a more valid metri. However, this made the trends less clear but made it so more dense counties had real information.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Challenges</b></p>
+    <p class = "lead">The first challenge was just with data manipulation. My data was messy, poorly organized, and contained many missing values. Turning this into useable data in D3 took a lot of time and work in R. The chloropleth took, by far, the most time to implement. The best example of code I had to work off of was the block for a by county chloropleth which used some huge oversimplifications. I had to completely redesign the code to make it have colors by category in addition to shading by value. While the zoom feature was relatively simple to implement from the block it completely screwed of the tooltip, so I had to implement a bunch of extracode to reshape the tool tip when the map has been zoomed. Finally, I spent a lot of time working with the legend mouseovers to make it so that it would only affect the counties in that category.</p>
+    <p class = "lead">For the scatter plot matrix that I implemented I did not run into any challenges(I had already become an expert on creating interactive legends). However, I did try for a while to implement this scatter plot matrix before eventually giving up due to some incredibly complex extra javascipt stuff happening in the background for it. <a href = "http://vis.stanford.edu/projects/datavore/splom/">Scatter Plot Matrix Example</a></p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Conclusion</b></p>
+    <p class = "lead">I was able to learn quite a bit from my visualizations some of which was intuitive but some some was genuinely surprising. The regional trends that I learned from the map visualization was a mix of the intuitive and surprising information. For example, I expected the middle of the country and the south to have a large amount heart disease and similarly I was somewhat aware of the north/south suicide/homicide trend, althrough I was not expecting it to be so clear. However, I was not expecting to see the HIV trend in the Southeast at all.</p>
+    <p class = "lead">The heatmap visualization delivered similar insights. I expected cancer and heart disease to be the dominant categories in the graph, though I was not expecting the black population to be so overrepresented in these categories. Additionally, while disheartening, it was expected that the black and latino populations would be the most affected by homicide and just black in HIV, but I was surprised to see White and Other(Asian) to be so much more represented in suicide.</p>
+    <p class = "lead">Finally, I did not expect cancer to so strongly correlated to heart disease. I would have thought cancer was more random and therefore uncorrelated to anything. None of the other cells in the scatter plot matrix gave much useful relationship information.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-3 col-md-1"></div>
+  <div class="col-xs-6 col-md-10"><p class = "lead"> <b>Github</b></p>
+    <a href = "https://github.com/skellert/DataVisualization"> Data Visualization Repository</a>
+  </div>
 </div>
 
 <script>
@@ -196,6 +261,7 @@ var main1 = function(){
         .attr("x", width/2)
         .attr("y", 30)
         .attr("text-anchor", "middle")
+        .style("font-size", 20)
         .text("Most Overrepresented Type of Death by County");
 
     var g = svg.append("g");
@@ -390,6 +456,12 @@ var main2 = function(){
               .append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+          svg.append("text")
+              .attr("x", 100)
+              .attr("y", -30)
+              .style("font-size", 20)
+              .text("Heatmap of Deaths per 100,000 by Race and Type");
+
           var raceLabels = svg.selectAll(".raceLabel")
               .data(race)
               .enter().append("text")
@@ -433,16 +505,16 @@ var main2 = function(){
               .attr("class", "legend");
 
           legend.append("rect")
-            .attr("x", function(d, i) { return legendElementWidth * i * .6; })
+            .attr("x", function(d, i) { return legendElementWidth * i * .71; })
             .attr("y", height - 65)
-            .attr("width", legendElementWidth*.6)
+            .attr("width", legendElementWidth*.71)
             .attr("height", gridSize / 4)
             .style("fill", function(d, i) { return colors[i]; });
 
           legend.append("text")
             .attr("class", "mono")
             .text(function(d) { return "≥ " + Math.round(d); })
-            .attr("x", function(d, i) { return legendElementWidth * i * .6; })
+            .attr("x", function(d, i) { return legendElementWidth * i * .71; })
             .attr("y", height - 65 + gridSize/3);
   })
 };
@@ -493,7 +565,7 @@ var main3 = function(){
 
     var svg = d3.select("#scatter").append("svg")
         .attr("font","10px sans-serif")
-        .attr("padding", "20px")
+        .attr("padding", "10px")
         .attr("width", size * n + padding)
         .attr("height", size * n + padding)
       .append("g")
@@ -517,7 +589,7 @@ var main3 = function(){
     color.domain().forEach(function(d,i){
 
         svg.append("rect")
-        .attr("x",50 + i*60)
+        .attr("x",15 + i*60)
         .attr("y", 5)
         .attr("width", 50)
         .attr("height",10)
@@ -540,7 +612,7 @@ var main3 = function(){
         });
 
         svg.append("text")
-        .attr("x",50 + i*60)
+        .attr("x",15 + i*60)
         .attr("y", 0)
         .text(d);        
 
@@ -556,7 +628,7 @@ var main3 = function(){
     // Titles for the diagonal.
     cell.filter(function(d) { return d.i === d.j; }).append("text")
         .attr("x", padding)
-        .attr("y", padding-10)
+        .attr("y", padding-8)
         .attr("dy", ".71em")
         .text(function(d) { return d.x; });
 
@@ -580,7 +652,7 @@ var main3 = function(){
         .enter().append("circle")
           .attr("cx", function(d) { return x(d[p.x]); })
           .attr("cy", function(d) { return y(d[p.y]); })
-          .attr("r", 3)
+          .attr("r", 2)
           .style("fill", function(d) { return color(d.Region); });
 
 
